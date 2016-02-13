@@ -1,3 +1,4 @@
+from datetime import datetime
 from invoke import task, run
 
 
@@ -14,6 +15,9 @@ _port = '4000'                # Listen given port
 _bundle_exec = False          # Run commands with Bundler
 _fpolling = False             # Force watch to use polling
 _incremental = False          # Enable incremental build (Jekyll 3 and higher!)
+
+# Post settings
+_post_ext = '.md'
 
 
 # === Tasks ===
@@ -131,7 +135,52 @@ def list(drafts=False):
     # run(' '.join(exec_lst))
 
 
+@task
+def post(title, drafts=False):
+    """Create a new post."""
+    # Parsing options
+    if drafts:
+        dest = _drafts_dest
+    else:
+        dest = _posts_dest
+
+    # File name
+    date = get_date()
+    name = sanitize(title)
+    fname = "{}-{}{}".format(date, name, _post_ext)
+
+    # Front Matter
+    front_matter = []
+    front_matter.append('---')
+    front_matter.append('layout: post')
+    front_matter.append('title: {}'.format(title))
+    front_matter.append('---')
+
+    # Create post file and write Front Matter
+    print("\nCreating new post '{}' in {}\n".format(fname, dest))
+    try:
+        f = open(dest + fname, 'w')
+    except FileNotFoundError:
+        print("* Error: directory '{}' does not exist!\n".format(dest))
+    else:
+        f.write('\n'.join(front_matter))
+        f.close()
+        print("* Done.\n")
+
+
 # === Helper functions ===
+
+def sanitize(str):
+    """Align post title to the Jekyll post name requirements."""
+    res = str.lower()
+    return res.replace(' ', '-')
+
+
+def get_date():
+    """Get current date in YEAR-MONTH-DAY format."""
+    dt = datetime.now()
+    return dt.strftime("%Y-%m-%d")
+
 
 def printer(exec_lst):
     # Core commands
