@@ -30,10 +30,43 @@ _post_ext = '.md'             # Post files extension
 _sitemap_url = 'http://www.example.com/sitemap.xml'
 
 
-# === Tasks ===
-# !!!TODO: add help descriptions.
+# == Helpers ===
 
-@task
+build_help = {
+    'drafts': "Build site including draft posts.",
+    'bundle-exec': "Build site via Bundler.",
+    'incremental-build': "Rebuild only posts and pages that have changed."
+}
+
+serve_help = {
+    'drafts': "Process and render draft posts.",
+    'bundle-exec': "Run Jekyll development server via Bundler.",
+    'force-polling': "Force watch to use polling.",
+    'incremental-build': "Rebuild only posts and pages that have changed."
+    }
+
+doctor_help = {
+    'bundle-exec': "Run doctor via Bundler."
+}
+
+list_help = {
+    'drafts': "Include draft posts."
+}
+
+post_help = {
+    'title': "Post title.",
+    'drafts': "Create draft post."
+}
+
+notify_help = {
+    'google': "Notify Google about sitemap updates.",
+    'bing': "Notify Bing about sitemap updates."
+}
+
+
+# === Tasks ===
+
+@task(help=build_help)
 def build(drafts=False, bundle_exec=_bundle_exec,
           incremental_build=_incremental):
     """Build the site.
@@ -59,7 +92,7 @@ def build(drafts=False, bundle_exec=_bundle_exec,
     # run(' '.join(exec_lst))
 
 
-@task
+@task(help=serve_help)
 def serve(drafts=False, bundle_exec=_bundle_exec,
           force_polling=_fpolling, incremental_build=_incremental):
     """Serve the site locally.
@@ -108,7 +141,7 @@ def clean():
     # run(' '.join(exec_lst))
 
 
-@task
+@task(help=doctor_help)
 def doctor(bundle_exec=_bundle_exec):
     """Search site and print specific deprecation warnings.
 
@@ -126,7 +159,7 @@ def doctor(bundle_exec=_bundle_exec):
     # run(' '.join(exec_lst))
 
 
-@task
+@task(help=list_help)
 def list(drafts=False):
     """List all posts."""
     core_command = 'ls -Ax1'
@@ -144,7 +177,7 @@ def list(drafts=False):
     # run(' '.join(exec_lst))
 
 
-@task
+@task(help=post_help)
 def post(title, drafts=False):
     """Create a new post."""
     # Parsing options
@@ -177,7 +210,7 @@ def post(title, drafts=False):
         print("* Done.\n")
 
 
-@task
+@task(help=notify_help)
 def notify(google=False, bing=False):
     """Notify various services about sitemap update."""
     if google:
