@@ -24,14 +24,13 @@ _fpolling = False             # Force watch to use polling
 _incremental = False          # Enable incremental build (Jekyll 3 and higher!)
 
 # Post settings
-_post_ext = '.md'
+_post_ext = '.md'             # Post files extension
 
 # Notification settings (your sitemap location)
 _sitemap_url = 'http://www.example.com/sitemap.xml'
 
 
 # === Tasks ===
-# !!!TODO: add `post` task.
 # !!!TODO: add help descriptions.
 
 @task
@@ -171,7 +170,7 @@ def post(title, drafts=False):
     try:
         f = open(dest + fname, 'w')
     except FileNotFoundError:
-        print("* Error: directory '{}' does not exist!\n".format(dest))
+        print("* [Error]: directory '{}' does not exist!\n".format(dest))
     else:
         f.write('\n'.join(front_matter))
         f.close()
