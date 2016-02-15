@@ -1,6 +1,13 @@
 from datetime import datetime
 from invoke import task, run
 
+try:
+    import urllib2 as urequest
+    import urllib as uparse
+except ImportError:
+    import urllib.request as urequest
+    import urllib.parse as uparse
+
 
 # === Settings ===
 
@@ -18,6 +25,9 @@ _incremental = False          # Enable incremental build (Jekyll 3 and higher!)
 
 # Post settings
 _post_ext = '.md'
+
+# Notification settings (your sitemap location)
+_sitemap_url = 'http://www.example.com/sitemap.xml'
 
 
 # === Tasks ===
@@ -168,6 +178,24 @@ def post(title, drafts=False):
         print("* Done.\n")
 
 
+@task
+def notify(google=False, bing=False):
+    """Notify various services about sitemap update."""
+    if google:
+        base_url = 'http://www.google.com/webmasters/sitemaps/ping'
+        params = {'sitemap': _sitemap_url}
+        ping_sitemap(base_url, params)
+    if bing:
+        base_url = 'http://www.bing.com/webmaster/ping.aspx'
+        params = {'siteMap': _sitemap_url}
+        ping_sitemap(base_url, params)
+
+    if not (google or bing):
+        print("\n* Specify service(s) to ping.")
+        print("* type: 'invoke --help notify'")
+        print("* for the list of available options.\n")
+
+
 # === Helper functions ===
 
 def sanitize(str):
@@ -180,6 +208,20 @@ def get_date():
     """Get current date in YEAR-MONTH-DAY format."""
     dt = datetime.now()
     return dt.strftime("%Y-%m-%d")
+
+
+def ping_sitemap(base_url, params):
+    """Submit sitemap."""
+    url_values = uparse.urlencode(params)
+    full_url = base_url + '?' + url_values
+    req = urequest.Request(full_url)
+
+    print("\nSubmitting sitemap to {}\n".format(base_url))
+    try:
+        urequest.urlopen(req)
+        print("* Done.\n")
+    except Exception as e:
+        print("* [Error] occured: {}\n".format(e))
 
 
 def printer(exec_lst):
