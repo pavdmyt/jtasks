@@ -1,5 +1,6 @@
 import os
 import shutil
+import webbrowser
 from datetime import datetime
 from invoke import task, run
 
@@ -216,6 +217,17 @@ def notify(google=False, bing=False):
         print("\n* Specify service(s) to ping.")
         print("* type: 'invoke --help notify'")
         print("* for the list of available options.\n")
+
+
+@task
+def preview():
+    """Launches default browser for previewing generated site.
+
+    `build` and/or `serve` tasks should be launched manually in advance,
+    depending on desired options.
+    """
+    url = "http://{}:{}".format(_hostname, _port)
+    webbrowser.open(url)
 
 
 # === Helper functions ===
