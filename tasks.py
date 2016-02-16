@@ -1,3 +1,4 @@
+import os
 from datetime import datetime
 from invoke import task, run
 
@@ -162,19 +163,14 @@ def doctor(bundle_exec=_bundle_exec):
 @task(help=list_help)
 def list(drafts=False):
     """List all posts."""
-    core_command = 'ls -Ax1'
-    exec_lst = [core_command]
+    print("\nListing posts...\n")
+    ls(_posts_dest)
+    print("")
 
-    # Icluding _posts_dest
-    exec_lst.append(_posts_dest)
-
-    # Parsing options
     if drafts:
-        exec_lst.append(_drafts_dest)
-
-    # Print options and execute resulted command
-    printer(exec_lst)
-    # run(' '.join(exec_lst))
+        print("Listing drafts...\n")
+        ls(_drafts_dest)
+        print("")
 
 
 @task(help=post_help)
@@ -256,6 +252,17 @@ def ping_sitemap(base_url, params):
         print("* [Error] occured: {}\n".format(e))
 
 
+def ls(path):
+    """Print dir contents."""
+    try:
+        item_lst = os.listdir(path)
+    except Exception as e:
+        print("* [Error] occured: {}\n".format(e))
+    else:
+        for item in item_lst:
+            print(item)
+
+
 def printer(exec_lst):
     # Core commands
     if 'jekyll build' in exec_lst:
@@ -268,8 +275,6 @@ def printer(exec_lst):
             )
     if 'rm -rf' in exec_lst:
         print("\nCleaning the site from {}".format(_site_dest))
-    if 'ls -Ax1' in exec_lst:
-        print("\nListing posts\n")
 
     # Options
     if '--host ' + _hostname in exec_lst:
