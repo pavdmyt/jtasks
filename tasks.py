@@ -1,4 +1,5 @@
 import os
+import shutil
 from datetime import datetime
 from invoke import task, run
 
@@ -131,15 +132,8 @@ def clean():
 
     Removes site output and metadata file without building.
     """
-    core_command = 'rm -rf'
-    exec_lst = [core_command]
-
-    # Icluding _site_dest
-    exec_lst.append(_site_dest)
-
-    # Print options and execute resulted command
-    printer(exec_lst)
-    # run(' '.join(exec_lst))
+    print("\nCleaning the site from {}\n".format(_site_dest))
+    rm(_site_dest)
 
 
 @task(help=doctor_help)
@@ -263,6 +257,16 @@ def ls(path):
             print(item)
 
 
+def rm(path):
+    """Recursively delete a directory tree."""
+    try:
+        shutil.rmtree(path)
+    except Exception as e:
+        print("* [Error] occured: {}\n".format(e))
+    else:
+        print("* Done.\n")
+
+
 def printer(exec_lst):
     # Core commands
     if 'jekyll build' in exec_lst:
@@ -273,8 +277,6 @@ def printer(exec_lst):
         print(
             "\nChecking site for compatibility problems and URL conflicts...\n"
             )
-    if 'rm -rf' in exec_lst:
-        print("\nCleaning the site from {}".format(_site_dest))
 
     # Options
     if '--host ' + _hostname in exec_lst:
