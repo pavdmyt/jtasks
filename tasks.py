@@ -92,7 +92,7 @@ def build(drafts=False, bundle_exec=_bundle_exec,
 
     # Print options and execute resulted command
     printer(exec_lst)
-    # run(' '.join(exec_lst))
+    run(' '.join(exec_lst))
 
 
 @task(help=serve_help)
@@ -124,7 +124,7 @@ def serve(drafts=False, bundle_exec=_bundle_exec,
 
     # Print options and execute resulted command
     printer(exec_lst)
-    # run(' '.join(exec_lst))
+    run(' '.join(exec_lst))
 
 
 @task
@@ -152,7 +152,7 @@ def doctor(bundle_exec=_bundle_exec):
 
     # Print options and execute resulted command
     printer(exec_lst)
-    # run(' '.join(exec_lst))
+    run(' '.join(exec_lst))
 
 
 @task(help=list_help)
@@ -193,8 +193,8 @@ def post(title, drafts=False):
     print("\nCreating new post '{}' in {}\n".format(fname, dest))
     try:
         f = open(dest + fname, 'w')
-    except FileNotFoundError:
-        print("* [Error]: directory '{}' does not exist!\n".format(dest))
+    except Exception as e:
+        print("* [Error] occured: {}\n".format(e))
     else:
         f.write('\n'.join(front_matter))
         f.close()
